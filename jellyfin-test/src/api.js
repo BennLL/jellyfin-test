@@ -1,5 +1,5 @@
-const API_URL = process.env.API_URL; 
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN; 
+const API_URL = process.env.REACT_APP_API_URL; 
+const ACCESS_TOKEN = process.env.REACT_APP_ACCESS_TOKEN; 
 
 export const getItems = async () => {
   const response = await fetch(`${API_URL}/Items?Recursive=true`, {
