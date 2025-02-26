@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: black;
+  color:white;
 }
 
 code {
@@ -27,5 +29,21 @@ code {
 .video-player video {
   width: 100%;
   height: auto;
+}
+
+.media-item{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+  max-width: 150px;
+  height: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  justify-content: space-evenly;
 }
 
