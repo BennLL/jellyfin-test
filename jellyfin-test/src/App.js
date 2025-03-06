@@ -1,11 +1,13 @@
 import React, { useState, useEffect, use } from "react";
 import { getItems, getMovies, getShows } from "./api";
+import { useNavigate } from "react-router-dom";
 
-// Use the REACT_APP_ prefix for environment variables
 const API_URL = process.env.REACT_APP_API_URL;
 const ACCESS_TOKEN = process.env.REACT_APP_ACCESS_TOKEN;
 
 const App = () => {
+  const navigate = useNavigate();
+
   const [items, setItems] = useState([]);
   const [shows, setShows] = useState([]);
   const [movies, setMovies] = useState([]);
@@ -22,13 +24,26 @@ const App = () => {
       setShows(showItems);
       setMovies(moviesItems);
       console.log(mediaItems);
-      console.log(showItems);
       console.log(moviesItems);
+      console.log(showItems);
     };
 
     fetchItems();
   }, []);
 
+  function printItem(item) {
+    console.log(item);
+    console.log("Selected Item:", item);
+    console.log("ID:", item.Id);
+    console.log("Name:", item.Name);
+    console.log("Type:", item.Type);
+    console.log("Media Stream URL:", `${API_URL}/Videos/${item.Id}/stream?api_key=${ACCESS_TOKEN}`);
+    console.log("Thumbnail URL:", `${API_URL}/Items/${item.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`);
+  }
+
+  const handleSelectItem = (item) => {
+    navigate(`/media/${item.Id}`, { state: { media: item } });
+  };
   return (
     <div>
       <h1>Media Library</h1>
@@ -36,7 +51,7 @@ const App = () => {
       <h2>All Items</h2>
       <div className="media-list" style={{ overflowX: "scroll", whiteSpace: "nowrap" }}>
         {items.map((item) => (
-          <div key={item.Id} className="media-item" onClick={() => setSelectedItem(item)} style={{ display: "inline-block", marginRight: "10px" }}>
+          <div key={item.Id} className="media-item" onClick={() => { setSelectedItem(item); printItem(item); }} style={{ display: "inline-block", marginRight: "10px" }}>
             <img
               src={`${API_URL}/Items/${item.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`}
               alt={item.Name}
@@ -51,7 +66,12 @@ const App = () => {
       <h2>Movies</h2>
       <div className="media-list" style={{ overflowX: "scroll", whiteSpace: "nowrap" }}>
         {movies.map((item) => (
-          <div className = "media-item" key={item.Id} onClick={() => setSelectedItem(item)} style={{ display: "inline-block", marginRight: "10px" }}>
+          <div
+            className="media-item"
+            key={item.Id}
+            onClick={() => handleSelectItem(item)} 
+            style={{ display: "inline-block", marginRight: "10px", cursor: "pointer" }}
+          >
             <img
               src={`${API_URL}/Items/${item.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`}
               alt={item.Name}
@@ -65,7 +85,12 @@ const App = () => {
       <h2>Shows</h2>
       <div className="media-list" style={{ overflowX: "scroll", whiteSpace: "nowrap" }}>
         {shows.map((item) => (
-          <div className = "media-item" key={item.Id} onClick={() => setSelectedItem(item)} style={{ display: "inline-block", marginRight: "10px" }}>
+          <div
+            className="media-item"
+            key={item.Id}
+            onClick={() => handleSelectItem(item)} 
+            style={{ display: "inline-block", marginRight: "10px", cursor: "pointer" }}
+          >
             <img
               src={`${API_URL}/Items/${item.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`}
               alt={item.Name}
@@ -75,6 +100,7 @@ const App = () => {
           </div>
         ))}
       </div>
+
 
       {/* Video Player Section */}
       {selectedItem && (
