@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -9,9 +9,23 @@ const MediaDetails = () => {
     const navigate = useNavigate();
     const media = location.state?.media; // Get media from state
 
+    const videoRef = useRef(null); // Reference to video player
+
     if (!media) {
         return <h1>Loading...</h1>;
     }
+
+    const handleRewind = () => {
+        if (videoRef.current) {
+            videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
+        }
+    };
+
+    const handleFastForward = () => {
+        if (videoRef.current) {
+            videoRef.current.currentTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 10);
+        }
+    };
 
     return (
         <div style={styles.container}>
@@ -35,10 +49,17 @@ const MediaDetails = () => {
             </div>
 
             <h2>Now Playing:</h2>
-            <video controls style={styles.videoPlayer}>
+            
+            {/* Video Player */}
+            <video ref={videoRef} controls style={styles.videoPlayer}>
                 <source src={`${API_URL}/Videos/${media.Id}/stream?api_key=${ACCESS_TOKEN}`} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
+
+            <div style={styles.controls}>
+                <button onClick={handleRewind} style={styles.controlButton}>⏪ Rewind 10s</button>
+                <button onClick={handleFastForward} style={styles.controlButton}>⏩ Forward 10s</button>
+            </div>
         </div>
     );
 };
@@ -83,7 +104,23 @@ const styles = {
         width: "80%",
         maxWidth: "800px",
         borderRadius: "10px",
-        boxShadow: "0px 4px 8px rgba(255, 255, 255, 0.2)"
+        boxShadow: "0px 4px 8px rgba(255, 255, 255, 0.2)",
+        marginBottom: "10px"
+    },
+    controls: {
+        display: "flex",
+        justifyContent: "center",
+        gap: "15px",
+        marginTop: "10px"
+    },
+    controlButton: {
+        padding: "10px 15px",
+        fontSize: "16px",
+        cursor: "pointer",
+        backgroundColor: "#008CBA",
+        border: "none",
+        color: "#fff",
+        borderRadius: "5px"
     }
 };
 
