@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -7,23 +7,44 @@ const ACCESS_TOKEN = process.env.REACT_APP_ACCESS_TOKEN;
 const MediaDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const media = location.state?.media; // Get media from state
+    const media = location.state?.media;
+    const videoRef = useRef(null);
 
-    const videoRef = useRef(null); // Reference to video player
+    useEffect(() => {
+        if (!media) {
+            console.error("No media found");
+        } else {
+            console.log("Media loaded:", media);
+        }
+    }, [media]);
 
     if (!media) {
         return <h1>Loading...</h1>;
     }
 
+    // Function to update the video source for seeking
+    const seekToTime = (newTime) => {
+        if (videoRef.current) {
+            const videoElement = videoRef.current;
+            const startTimeTicks = newTime * 10000000; // Convert seconds to Jellyfin time format
+
+            videoElement.src = `${API_URL}/Videos/${media.Id}/stream?api_key=${ACCESS_TOKEN}&startTimeTicks=${startTimeTicks}&DirectPlay=true&Static=true`;
+            videoElement.load();
+            videoElement.play();
+        }
+    };
+
     const handleRewind = () => {
         if (videoRef.current) {
-            videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
+            const newTime = Math.max(0, videoRef.current.currentTime - 10);
+            seekToTime(newTime);
         }
     };
 
     const handleFastForward = () => {
         if (videoRef.current) {
-            videoRef.current.currentTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 10);
+            const newTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 10);
+            seekToTime(newTime);
         }
     };
 
@@ -52,7 +73,9 @@ const MediaDetails = () => {
             
             {/* Video Player */}
             <video ref={videoRef} controls style={styles.videoPlayer}>
-                <source src={`${API_URL}/Videos/${media.Id}/stream?api_key=${ACCESS_TOKEN}`} type="video/mp4" />
+                <source 
+                    src={`${API_URL}/Videos/${media.Id}/stream?api_key=${ACCESS_TOKEN}&DirectPlay=true&Static=true`} 
+                />
                 Your browser does not support the video tag.
             </video>
 
