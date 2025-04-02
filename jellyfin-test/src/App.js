@@ -44,6 +44,11 @@ const App = () => {
   const handleSelectItem = (item) => {
     navigate(`/media/${item.Id}`, { state: { media: item } });
   };
+
+  const handleSelectShow = (show) => {
+    navigate(`/show/${show.Id}`, { state: { show } });
+  };
+
   return (
     <div>
       <h1>Media Library</h1>
@@ -69,7 +74,7 @@ const App = () => {
           <div
             className="media-item"
             key={item.Id}
-            onClick={() => handleSelectItem(item)} 
+            onClick={() => handleSelectItem(item)}
             style={{ display: "inline-block", marginRight: "10px", cursor: "pointer" }}
           >
             <img
@@ -84,22 +89,23 @@ const App = () => {
 
       <h2>Shows</h2>
       <div className="media-list" style={{ overflowX: "scroll", whiteSpace: "nowrap" }}>
-        {shows.map((item) => (
+        {shows.map((show) => (
           <div
             className="media-item"
-            key={item.Id}
-            onClick={() => handleSelectItem(item)} 
+            key={show.Id}
+            onClick={() => handleSelectShow(show)}  // Updated function call
             style={{ display: "inline-block", marginRight: "10px", cursor: "pointer" }}
           >
             <img
-              src={`${API_URL}/Items/${item.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`}
-              alt={item.Name}
+              src={`${API_URL}/Items/${show.Id}/Images/Primary?api_key=${ACCESS_TOKEN}`}
+              alt={show.Name}
               width={150}
             />
-            <h5>{item.Name}</h5>
+            <h5>{show.Name}</h5>
           </div>
         ))}
       </div>
+
 
 
       {/* Video Player Section */}

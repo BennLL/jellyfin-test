@@ -34,19 +34,6 @@ const MediaDetails = () => {
         }
     };
 
-    const handleRewind = () => {
-        if (videoRef.current) {
-            const newTime = Math.max(0, videoRef.current.currentTime - 10);
-            seekToTime(newTime);
-        }
-    };
-
-    const handleFastForward = () => {
-        if (videoRef.current) {
-            const newTime = Math.min(videoRef.current.duration, videoRef.current.currentTime + 10);
-            seekToTime(newTime);
-        }
-    };
 
     return (
         <div style={styles.container}>
@@ -72,17 +59,13 @@ const MediaDetails = () => {
             <h2>Now Playing:</h2>
             
             {/* Video Player */}
-            <video ref={videoRef} controls style={styles.videoPlayer}>
+            <video ref={videoRef} controls muted={false} style={styles.videoPlayer}>
                 <source 
                     src={`${API_URL}/Videos/${media.Id}/stream?api_key=${ACCESS_TOKEN}&DirectPlay=true&Static=true`} 
                 />
                 Your browser does not support the video tag.
             </video>
 
-            <div style={styles.controls}>
-                <button onClick={handleRewind} style={styles.controlButton}>⏪ Rewind 10s</button>
-                <button onClick={handleFastForward} style={styles.controlButton}>⏩ Forward 10s</button>
-            </div>
         </div>
     );
 };
